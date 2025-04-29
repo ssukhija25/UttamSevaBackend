@@ -1,25 +1,75 @@
-const User = require('../models/userModel');
+const User = require('../models/userModel.js');
+const jwt = require('jsonwebtoken');
+const bcrypt = require('bcryptjs');
 
-// Get all users
+const dotenv = require('dotenv');
+dotenv.config(); 
+const JWT_SECRET = process.env.JWT_SECRET;
+
+// generate JWT token.................................
+const generateToken = (userId) => {
+  if (!JWT_SECRET) {
+    console.error("JWT_SECRET is not set");
+  }
+
+  try {
+    return jwt.sign({ id: userId }, JWT_SECRET, { expiresIn: '2d' });
+  } catch (error) {
+    console.error("Error generating token:", error);
+  }
+};
+
+// Check all users aggest................................
 const getUsers = async (req, res) => {
   try {
-    const users = await User.find();
+    const users = await User.find().select('-password');
     res.status(200).json(users);
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
 };
 
-// Create a user
+// create user..............................................
 const createUser = async (req, res) => {
   try {
-    const { name, email } = req.body;
-    const newUser = new User({ name, email });
+    const { name, email, password } = req.body;
+
+    const existingUser = await User.findOne({ email });
+    if (existingUser)
+      return res.status(400).json({ message: 'User already exists' });
+    const hashedPassword = await bcrypt.hash(password, 10);
+    const newUser = new User({ name, email, password: hashedPassword });
     await newUser.save();
-    res.status(201).json(newUser);
+    const token = generateToken(newUser._id);
+    res.status(201).json({
+      user: { name, email },
+      token
+    });
   } catch (error) {
     res.status(400).json({ message: error.message });
   }
 };
 
-module.exports = { getUsers, createUser };
+// // login user..................................................
+const loginUser = async (req, res) => {
+  try {
+    const { email, password } = req.body;
+
+    const user = await User.findOne({ email });
+    if (!user) return res.status(400).json({ message: 'User not found' });
+
+    const isMatch = await bcrypt.compare(password, user.password);
+    if (!isMatch)
+      return res.status(400).json({ message: 'password incorrect try again' });
+    const token = generateToken(user._id);
+
+    res.status(200).json({
+      user: { name: user.name, email: user.email },
+      token
+    });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+module.exports = { getUsers, createUser, loginUser };
