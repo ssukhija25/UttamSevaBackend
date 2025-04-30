@@ -11,9 +11,8 @@ const generateToken = (userId) => {
   if (!JWT_SECRET) {
     console.error("JWT_SECRET is not set");
   }
-
   try {
-    return jwt.sign({ id: userId }, JWT_SECRET, { expiresIn: '2d' });
+    return jwt.sign({ id: userId }, JWT_SECRET, { expiresIn: '7d' });
   } catch (error) {
     console.error("Error generating token:", error);
   }
@@ -29,7 +28,7 @@ const getUsers = async (req, res) => {
   }
 };
 
-// create user..............................................
+// create user.............................................
 const createUser = async (req, res) => {
   try {
     const { name, email, password } = req.body;
@@ -76,7 +75,7 @@ const loginUser = async (req, res) => {
     res.status(200).json({
       success: true,
       message: 'User logged in successfully',
-      // user: { id: user._id, name: user.name, email: user.email },
+      user: { id: user._id, name: user.name, email: user.email , password:user.password},
       token
     });
   } catch (error) {
