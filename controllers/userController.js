@@ -47,7 +47,7 @@ const createUser = async (req, res) => {
     res.status(201).json({
       success: true,
       message: 'User created successfully',
-      // user: { id: newUser._id, name, email },
+      user: { id: newUser._id, name, email },
       token
     });
   } catch (error) {
@@ -75,7 +75,7 @@ const loginUser = async (req, res) => {
     res.status(200).json({
       success: true,
       message: 'User logged in successfully',
-      user: { id: user._id, name: user.name, email: user.email , password:user.password},
+      user: { id: user._id, name: user.name, email: user.email },
       token
     });
   } catch (error) {
