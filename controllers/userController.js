@@ -19,7 +19,7 @@ const generateToken = (userId) => {
   }
 };
 
-// Check all users aggest................................
+// Check all users just................................
 const getUsers = async (req, res) => {
   try {
     const users = await User.find().select('-password');
