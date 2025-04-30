@@ -35,40 +35,52 @@ const createUser = async (req, res) => {
     const { name, email, password } = req.body;
 
     const existingUser = await User.findOne({ email });
-    if (existingUser)
-      return res.status(400).json({ message: 'User already exists' });
+    if (existingUser) {
+      return res.status(400).json({ success: false, message: 'User already exists' });
+    }
+
     const hashedPassword = await bcrypt.hash(password, 10);
     const newUser = new User({ name, email, password: hashedPassword });
     await newUser.save();
+
     const token = generateToken(newUser._id);
+
     res.status(201).json({
-      user: { name, email },
+      success: true,
+      message: 'User created successfully',
+      // user: { id: newUser._id, name, email },
       token
     });
   } catch (error) {
-    res.status(400).json({ message: error.message });
+    res.status(400).json({ success: false, message: error.message });
   }
 };
 
-// // login user..................................................
+// login user..........................................
 const loginUser = async (req, res) => {
   try {
     const { email, password } = req.body;
 
     const user = await User.findOne({ email });
-    if (!user) return res.status(400).json({ message: 'User not found' });
+    if (!user) {
+      return res.status(400).json({ success: false, message: 'User not found' });
+    }
 
     const isMatch = await bcrypt.compare(password, user.password);
-    if (!isMatch)
-      return res.status(400).json({ message: 'password incorrect try again' });
+    if (!isMatch) {
+      return res.status(400).json({ success: false, message: 'Incorrect password' });
+    }
+
     const token = generateToken(user._id);
 
     res.status(200).json({
-      user: { name: user.name, email: user.email },
+      success: true,
+      message: 'User logged in successfully',
+      // user: { id: user._id, name: user.name, email: user.email },
       token
     });
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    res.status(500).json({ success: false, message: error.message });
   }
 };
 
