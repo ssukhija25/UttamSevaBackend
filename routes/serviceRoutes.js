@@ -6,8 +6,8 @@ const {
   getServicesByCategory,
 } = require('../controllers/serviceController');
 
-router.post('/', createService);
-router.get('/', getServices);
+router.post('/createService', createService);
+router.get('/allService', getServices);
 router.get('/category/:categoryId', getServicesByCategory);
 
 module.exports = router;
