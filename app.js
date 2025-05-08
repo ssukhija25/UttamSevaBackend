@@ -13,9 +13,6 @@ app.use(express.json());
 
 app.use("/", mainRoute);
 
-app.get("/", (req, res) => {
-  res.send("UttamSeva Backend Running");
-});
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () =>
