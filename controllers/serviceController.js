@@ -1,6 +1,6 @@
 const Service = require('../models/serviceModel');
 const Category = require('../models/categoryModel');
-
+const mongoose = require("mongoose");
 // create new service.................................................
 const createService = async (req, res) => {
   try {
