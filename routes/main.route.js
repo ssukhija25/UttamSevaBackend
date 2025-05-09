@@ -7,7 +7,8 @@ const paymentRoutes = require("./paymentRoutes");
 const bookingRoutes = require("./bookingRoutes");
 const feedbackRoutes = require("./feedbackRoutes");
 const serviceProvider = require("./serviceProviderRoutes")
-const addressRoutes = require("./addressRoutes")
+const addressRoutes = require("./addressRoutes");
+
 
 
 
@@ -22,7 +23,8 @@ mainRoute.use(feedbackRoutes);
 mainRoute.use(serviceProvider);
 mainRoute.use(addressRoutes);
 
-mainRoute.get("/api/mainpage", (req, res) => {
+
+mainRoute.get("/", (req, res) => {
   res.send("Welcome!");
 });
 

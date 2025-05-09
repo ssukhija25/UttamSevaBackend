@@ -14,12 +14,7 @@ const serviceProviderSchema = new mongoose.Schema({
   phone_number: { 
     type: String, 
     required: true, 
-    validate: {
-      validator: function(v) {
-        return /\d{10}/.test(v);
-      },
-      message: props => `${props.value} is not a valid phone number!`
-    }
+    ref:"Otp"
   },
   email: { 
     type: String, 

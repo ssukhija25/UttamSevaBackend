@@ -1,8 +1,7 @@
 const Address = require('../models/Address');
 const mongoose = require('mongoose');
-const User = require('../models/User'); // Assuming you have a User model
 
-// Create address....   .........................................................................
+// Create address
 exports.createAddress = async (req, res) => {
   try {
     const { userId, addressLine1, addressLine2, city, state, zipCode, country, isDefault, label } = req.body;
@@ -15,16 +14,7 @@ exports.createAddress = async (req, res) => {
       });
     }
 
-    // Check if the user exists...........................................................
-    const userExists = await User.findById(userId);
-    if (!userExists) {
-      return res.status(404).json({
-        success: false,
-        message: 'User not found.'
-      });
-    }
-
-    // Create and save the address.............................................................
+    // Directly create and save the address without checking User
     const address = new Address({
       userId,
       addressLine1,
@@ -33,8 +23,8 @@ exports.createAddress = async (req, res) => {
       state,
       zipCode,
       country,
-      isDefault: isDefault || false, // Default to false if not provided
-      label: label || 'Home' // Default label
+      isDefault: isDefault || false,
+      label: label || 'Home'
     });
 
     await address.save();
@@ -53,12 +43,11 @@ exports.createAddress = async (req, res) => {
   }
 };
 
-// Get all addresses by user ID...............................................................
+// Get all addresses by user ID
 exports.getAddressesByUser = async (req, res) => {
   try {
     const { userId } = req.params;
 
-    // Validate userId...........................................................................
     if (!userId) {
       return res.status(400).json({
         success: false,
@@ -66,8 +55,8 @@ exports.getAddressesByUser = async (req, res) => {
       });
     }
 
-    // Fetch addresses associated with the user.......................................................
     const addresses = await Address.find({ userId }).sort({ createdAt: -1 });
+
     if (addresses.length === 0) {
       return res.status(404).json({
         success: false,
@@ -88,12 +77,11 @@ exports.getAddressesByUser = async (req, res) => {
   }
 };
 
-// Update address.................................................................................
+// Update address
 exports.updateAddress = async (req, res) => {
   try {
     const { id } = req.params;
 
-    // Validate address ID
     if (!mongoose.Types.ObjectId.isValid(id)) {
       return res.status(400).json({
         success: false,
@@ -101,7 +89,6 @@ exports.updateAddress = async (req, res) => {
       });
     }
 
-    // Update the address.............................................................................
     const updatedAddress = await Address.findByIdAndUpdate(id, req.body, { new: true });
 
     if (!updatedAddress) {
@@ -125,12 +112,11 @@ exports.updateAddress = async (req, res) => {
   }
 };
 
-// Delete address.........................................................................................
+// Delete address
 exports.deleteAddress = async (req, res) => {
   try {
     const { id } = req.params;
 
-    // Validate address ID..................................................................................
     if (!mongoose.Types.ObjectId.isValid(id)) {
       return res.status(400).json({
         success: false,
@@ -138,7 +124,6 @@ exports.deleteAddress = async (req, res) => {
       });
     }
 
-    // Delete the address....................................................................................
     const deletedAddress = await Address.findByIdAndDelete(id);
 
     if (!deletedAddress) {

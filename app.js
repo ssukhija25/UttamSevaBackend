@@ -2,7 +2,7 @@ const express = require("express");
 const cors = require("cors");
 const connectDB = require("./config/dbConfig");
 require("dotenv").config();
-
+const otpRoutes = require('./routes/otpRoutes');
 const mainRoute = require("./routes/main.route");
 
 const app = express();
@@ -11,7 +11,8 @@ connectDB();
 app.use(cors());
 app.use(express.json());
 
-app.use("/", mainRoute);
+app.use("/api/mainpage", mainRoute);
+app.use('/api/otp', otpRoutes);
 
 
 app.use((req, res) => {
