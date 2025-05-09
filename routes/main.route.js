@@ -22,7 +22,7 @@ mainRoute.use(feedbackRoutes);
 mainRoute.use(serviceProvider);
 mainRoute.use(addressRoutes);
 
-mainRoute.get("/", (req, res) => {
+mainRoute.get("/api/mainpage", (req, res) => {
   res.send("Welcome!");
 });
 
