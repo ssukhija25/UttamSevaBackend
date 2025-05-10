@@ -1,20 +1,26 @@
-const express = require('express');
-const bodyParser = require('body-parser');
-const cors = require('cors');
-const userRoutes = require('./routes/userRoutes');
+const express = require("express");
+const cors = require("cors");
+const connectDB = require("./config/dbConfig");
+require("dotenv").config();
+const otpRoutes = require('./routes/otpRoutes');
+const mainRoute = require("./routes/main.route");
 
 const app = express();
+connectDB();
 
-// Middlewares
-app.use(bodyParser.json());
 app.use(cors());
+app.use(express.json());
 
-// Routes
-app.get('/', (req, res) => {
-    res.send('Hello World!')
-  })
-  
-// User routes
-app.use('/api/users', userRoutes);
+app.use("/api/mainpage", mainRoute);
+app.use('/api/otp', otpRoutes);
+app.use('/',(req,res)=>{  res.status(200).json({ success: true, message: "API endpoint not found" });
+})
 
-module.exports = app;
+app.use((req, res) => {
+  res.status(404).json({ success: false, message: "API endpoint not found" });
+});
+
+const PORT = process.env.PORT || 5000;
+app.listen(PORT, () =>
+  console.log(`Server running at http://localhost:${PORT}`)
+);
